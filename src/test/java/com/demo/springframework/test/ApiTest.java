@@ -16,6 +16,7 @@ public class ApiTest {
 
         //3.获取bean
         UserService userService = (UserService)beanFactory.getBean("userService", "小傅哥");
+        System.out.println(userService);
         userService.queryUserInfo();
     }
 }
