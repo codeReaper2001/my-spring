@@ -1,29 +1,27 @@
 package com.demo.springframework.test.bean;
 
+import lombok.Data;
+
+@Data
 public class UserService {
     private String uId;
-
+    private String company;
+    private String location;
     private UserDao userDao;
 
     UserService() {}
 
     public String queryUserInfo() {
-        return "查询用户信息：" + userDao.queryUserName(uId);
+        return userDao.queryUserName(uId) + "，" + company + "，" + location;
     }
 
-    public String getuId() {
-        return uId;
-    }
-
-    public void setuId(String uId) {
-        this.uId = uId;
-    }
-
-    public UserDao getUserDao() {
-        return userDao;
-    }
-
-    public void setUserDao(UserDao userDao) {
-        this.userDao = userDao;
+    @Override
+    public String toString() {
+        return "UserService{" +
+                "uId='" + uId + '\'' +
+                ", company='" + company + '\'' +
+                ", location='" + location + '\'' +
+                ", userDao=" + userDao +
+                '}';
     }
 }

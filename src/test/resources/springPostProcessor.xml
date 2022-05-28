@@ -8,4 +8,9 @@
         <property name="location" value="深圳"/>
         <property name="userDao" ref="userDao"/>
     </bean>
+
+
+    <bean class="com.demo.springframework.test.common.MyBeanPostProcessor"/>
+    <bean class="com.demo.springframework.test.common.MyBeanFactoryPostProcessor"/>
+
 </beans>
