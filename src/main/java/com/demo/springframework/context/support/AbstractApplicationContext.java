@@ -20,13 +20,16 @@ public abstract class AbstractApplicationContext
         // 2.获取BeanFactory
         ConfigurableListableBeanFactory beanFactory = getBeanFactory();
 
-        // 3.在Bean实例化前，执行 BeanFactoryPostProcessor (Invoke factory processors registered as beans in the context.)
+        // 3. 添加ApplicationContextAwareProcessor，让继承自ApplicationContextAware的Bean对象都能感知所属的ApplicationContext
+        beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
+
+        // 4.在Bean实例化前，执行 BeanFactoryPostProcessor (Invoke factory processors registered as beans in the context.)
         invokeBeanFactoryPostProcessors(beanFactory);
 
-        // 4. BeanPostProcessor 需要提前于其他 Bean 对象实例化之前执行注册操作
+        // 5. BeanPostProcessor 需要提前于其他 Bean 对象实例化之前执行注册操作
         registerBeanPostProcessors(beanFactory);
 
-        // 5.提前实例化单例Bean对象
+        // 6.提前实例化单例Bean对象
         beanFactory.preInstantiateSingletons();
     }
 

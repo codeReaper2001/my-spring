@@ -1,11 +1,20 @@
 package com.demo.springframework.test.bean;
 
-import com.demo.springframework.beans.factory.DisposableBean;
-import com.demo.springframework.beans.factory.InitializingBean;
-import lombok.Data;
+import com.demo.springframework.beans.BeansException;
+import com.demo.springframework.beans.factory.BeanClassLoaderAware;
+import com.demo.springframework.beans.factory.BeanFactory;
+import com.demo.springframework.beans.factory.BeanFactoryAware;
+import com.demo.springframework.beans.factory.BeanNameAware;
+import com.demo.springframework.context.ApplicationContext;
+import com.demo.springframework.context.ApplicationContextAware;
 
-@Data
-public class UserService implements InitializingBean, DisposableBean {
+public class UserService
+        implements BeanNameAware, BeanClassLoaderAware,
+        ApplicationContextAware, BeanFactoryAware {
+
+    private ApplicationContext applicationContext;
+    private BeanFactory beanFactory;
+
     private String uId;
     private String company;
     private String location;
@@ -28,12 +37,62 @@ public class UserService implements InitializingBean, DisposableBean {
     }
 
     @Override
-    public void destroy() throws Exception {
-        System.out.println("执行：UserService.destroy");
+    public void setBeanClassLoader(ClassLoader classLoader) {
+        System.out.println("ClassLoader: " + classLoader);
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
-        System.out.println("执行：UserService.afterPropertiesSet");
+    public void setBeanName(String name) {
+        System.out.println("Bean Name is: " + name);
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public BeanFactory getBeanFactory() {
+        return beanFactory;
+    }
+
+    public String getuId() {
+        return uId;
+    }
+
+    public void setuId(String uId) {
+        this.uId = uId;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public UserDao getUserDao() {
+        return userDao;
+    }
+
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
     }
 }
