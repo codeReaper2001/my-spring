@@ -1,9 +1,11 @@
 package com.demo.springframework.test.bean;
 
+import com.demo.springframework.beans.factory.DisposableBean;
+import com.demo.springframework.beans.factory.InitializingBean;
 import lombok.Data;
 
 @Data
-public class UserService {
+public class UserService implements InitializingBean, DisposableBean {
     private String uId;
     private String company;
     private String location;
@@ -23,5 +25,15 @@ public class UserService {
                 ", location='" + location + '\'' +
                 ", userDao=" + userDao +
                 '}';
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        System.out.println("执行：UserService.destroy");
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println("执行：UserService.afterPropertiesSet");
     }
 }
