@@ -1,16 +1,15 @@
 package com.demo.springframework.test.bean;
 
+import com.demo.springframework.stereotype.Component;
 import lombok.Data;
 
 import java.util.Random;
 
 @Data
+@Component("userService")
 public class UserService implements IUserService {
 
-    private String uId;
-    private String company;
-    private String location;
-    private IUserDao userDao;
+    private String token;
 
     public UserService() {}
 
@@ -32,4 +31,10 @@ public class UserService implements IUserService {
         return "注册用户：" + userName + " success！";
     }
 
+    @Override
+    public String toString() {
+        return "UserService{" +
+                "token='" + token + '\'' +
+                '}';
+    }
 }

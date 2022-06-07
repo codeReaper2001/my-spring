@@ -4,9 +4,9 @@ import com.demo.springframework.beans.PropertyValues;
 
 public class BeanDefinition {
 
-    String SCOPE_SINGLETON = ConfigurableBeanFactory.SCOPE_SINGLETON;
+    static String SCOPE_SINGLETON = ConfigurableBeanFactory.SCOPE_SINGLETON;
 
-    String SCOPE_PROTOTYPE = ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+    static String SCOPE_PROTOTYPE = ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
     private Class<?> beanClass;
 
