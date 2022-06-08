@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	         http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="userService" class="com.demo.springframework.test.bean.UserService">
+        <property name="token" value="RejDlI78hu223Opo983Ds"/>
+    </bean>
+
+    <bean class="com.demo.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+
+    <!--下面两种相当于是不同的切面方法实现-->
+    <!--1.使用spring系统提供的MethodBeforeAdviceInterceptor组装出MethodInterceptor对象-->
+    <bean id="beforeAdvice" class="com.demo.springframework.test.bean.UserServiceBeforeAdvice"/>
+
+    <bean id="methodBeforeAdviceInterceptor" class="com.demo.springframework.aop.framework.adapter.MethodBeforeAdviceInterceptor">
+        <property name="advice" ref="beforeAdvice"/>
+    </bean>
+
+    <!--2.直接使用自己实现的MethodInterceptor对象-->
+    <bean id="userServiceInterceptor" class="com.demo.springframework.test.bean.UserServiceInterceptor">
+    </bean>
+
+    <bean id="pointcutAdvisor" class="com.demo.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor">
+        <property name="expression" value="execution(* com.demo.springframework.test.bean.IUserService.*(..))"/>
+        <property name="advice" ref="methodBeforeAdviceInterceptor"/>
+<!--        <property name="advice" ref="userServiceInterceptor"/>-->
+    </bean>
+
+
+</beans>

@@ -7,8 +7,8 @@ import org.junit.Test;
 public class ApiTest {
 
     @Test
-    public void test_scan() {
-        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:scan-component.xml");
+    public void test_autoProxy() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:aop-complete.xml");
         IUserService userService = applicationContext.getBean("userService", IUserService.class);
         System.out.println("测试结果：" + userService.queryUserInfo());
     }

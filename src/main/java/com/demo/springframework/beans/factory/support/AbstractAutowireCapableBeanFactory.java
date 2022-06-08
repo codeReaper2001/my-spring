@@ -31,6 +31,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             // 给bean填充属性
             applyPropertyValues(beanName, bean, beanDefinition);
             // 执行Bean的初始化方法和BeanPostProcessor的前置和后置方法
+            // 其中BeanPostProcessor的后置方法包含了将bean转为代理对象的逻辑（DefaultAdvisorAutoProxyCreator实现）
             bean = initializeBean(beanName, bean, beanDefinition);
         }
         catch (Exception e) {
@@ -197,6 +198,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             Object current = processor.postProcessBeforeInitialization(result, beanName);
             if (null == current)
                 return result;
+            result = current;
         }
         return result;
     }
@@ -208,6 +210,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             Object current = processor.postProcessAfterInitialization(result, beanName);
             if (null == current)
                 return result;
+            result = current;
         }
         return result;
     }

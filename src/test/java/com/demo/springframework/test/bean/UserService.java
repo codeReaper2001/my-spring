@@ -1,23 +1,10 @@
 package com.demo.springframework.test.bean;
 
-import com.demo.springframework.beans.factory.annotation.Autowired;
-import com.demo.springframework.beans.factory.annotation.Value;
-import com.demo.springframework.stereotype.Component;
-import lombok.Data;
-
 import java.util.Random;
 
-@Data
-@Component("userService")
 public class UserService implements IUserService {
 
-    @Value("${token}")
     private String token;
-
-    @Autowired
-    private UserDao userDao;
-
-    public UserService() {}
 
     public String queryUserInfo() {
         try {
@@ -25,7 +12,7 @@ public class UserService implements IUserService {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return userDao.queryUserName("10001") + "，" + token;
+        return "小傅哥，100001，深圳，" + token;
     }
 
     public String register(String userName) {
@@ -37,10 +24,11 @@ public class UserService implements IUserService {
         return "注册用户：" + userName + " success！";
     }
 
-    @Override
-    public String toString() {
-        return "UserService{" +
-                "token='" + token + '\'' +
-                '}';
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

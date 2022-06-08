@@ -23,4 +23,8 @@ public class MethodBeforeAdviceInterceptor implements MethodInterceptor {
 
         return methodInvocation.proceed();
     }
+
+    public void setAdvice(MethodBeforeAdvice advice) {
+        this.advice = advice;
+    }
 }

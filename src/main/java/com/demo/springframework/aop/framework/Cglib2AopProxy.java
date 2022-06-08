@@ -34,10 +34,14 @@ public class Cglib2AopProxy implements AopProxy {
 
         @Override
         public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
+            // 方法调用转为被代理对象的对应方法调用结构
             CglibMethodInvocation methodInvocation = new CglibMethodInvocation(advised.getTargetSource().getTarget(), method, objects, methodProxy);
+            // 方法是否符合方法表达式
             if (advised.getMethodMatcher().matches(method, advised.getTargetSource().getTarget().getClass())) {
+                // 符合，走拦截器调用流程，什么样的流程取决于注入的拦截器
                 return advised.getMethodInterceptor().invoke(methodInvocation);
             }
+            // 不符合，走原方法流程
             return methodInvocation.proceed();
         }
     }

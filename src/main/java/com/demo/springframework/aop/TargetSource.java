@@ -1,5 +1,7 @@
 package com.demo.springframework.aop;
 
+import com.demo.springframework.util.ClassUtils;
+
 public class TargetSource {
 
     private final Object target;
@@ -16,7 +18,14 @@ public class TargetSource {
      * @return the type of targets returned by this {@link TargetSource}
      */
     public Class<?>[] getTargetClass() {
-        return this.target.getClass().getInterfaces();
+        // 先得到代理对象对应的class对象
+        Class<?> clazz = this.target.getClass();
+        /*
+        * 如果代理对象的class对象是使用Cglib生成的，则其父类class对象
+        * 才是代理对象的class对象
+        * */
+        clazz = ClassUtils.isCglibProxyClass(clazz) ? clazz.getSuperclass() : clazz;
+        return clazz.getInterfaces();
     }
 
     /**
