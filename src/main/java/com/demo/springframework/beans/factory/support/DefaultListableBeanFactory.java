@@ -5,7 +5,9 @@ import com.demo.springframework.beans.factory.ConfigurableListableBeanFactory;
 import com.demo.springframework.beans.factory.config.BeanDefinition;
 import com.demo.springframework.beans.factory.config.BeanPostProcessor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DefaultListableBeanFactory
@@ -55,5 +57,24 @@ public class DefaultListableBeanFactory
         for (String beanName : beanDefinitionMap.keySet()) {
             getBean(beanName);
         }
+    }
+
+    // 实现根据类型获取bean
+    @Override
+    public <T> T getBean(Class<T> requiredType) throws BeansException {
+        // 主要原理是遍历beanDefinitionMap集合，当bean的类型符合时放入到beanNames集合中
+        // 当最终发现beanNames中只有一个bean名，则实例化它，否则抛出异常
+        List<String> beanNames = new ArrayList<>();
+        for (Map.Entry<String, BeanDefinition> entry : beanDefinitionMap.entrySet()) {
+            Class<?> beanClass = entry.getValue().getBeanClass();
+            // requiredType xxx := beanClass yyy
+            if (requiredType.isAssignableFrom(beanClass)) {
+                beanNames.add(entry.getKey());
+            }
+        }
+        if (1 == beanNames.size()) {
+            return getBean(beanNames.get(0), requiredType);
+        }
+        throw new BeansException(requiredType + "expected single bean but found " + beanNames.size() + ": " + beanNames);
     }
 }

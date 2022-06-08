@@ -6,6 +6,7 @@ import com.demo.springframework.beans.factory.config.BeanDefinition;
 import com.demo.springframework.beans.factory.config.BeanPostProcessor;
 import com.demo.springframework.beans.factory.config.ConfigurableBeanFactory;
 import com.demo.springframework.util.ClassUtils;
+import com.demo.springframework.util.StringValueResolver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,13 +15,43 @@ public abstract class AbstractBeanFactory
         extends FactoryBeanRegistrySupport
         implements ConfigurableBeanFactory {
 
+    /**
+     * 用于加载Bean类的类加载器
+     */
     private ClassLoader beanClassLoader = ClassUtils.getDefaultClassLoader();
 
+    /**
+     * BeanPostProcessors to apply in createBean
+     * 在createBean需要使用到的BeanPostProcessor集合
+     */
     private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
+
+    /**
+     * String resolvers to apply e.g. to annotation attribute values
+     * 要应用的字符串解析器，用于解析例如注解属性值
+     */
+    private final List<StringValueResolver> embeddedValueResolvers = new ArrayList<>();
 
     @Override
     public Object getBean(String name) throws BeansException {
         return doGetBean(name, null);
+    }
+
+    // 添加一个字符串解析器到集合中
+    @Override
+    public void addEmbeddedValueResolver(StringValueResolver valueResolver) {
+        this.embeddedValueResolvers.add(valueResolver);
+    }
+
+    // 返回多个解析器解析后的最终结果
+    // value: String -> resolver1 -> resolver2 -> ... -> result
+    @Override
+    public String resolveEmbeddedValue(String value) {
+        String result = value;
+        for (StringValueResolver resolver : this.embeddedValueResolvers) {
+            result = resolver.resolveStringValue(value);
+        }
+        return result;
     }
 
     @Override

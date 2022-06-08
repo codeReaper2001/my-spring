@@ -1,5 +1,7 @@
 package com.demo.springframework.test.bean;
 
+import com.demo.springframework.beans.factory.annotation.Autowired;
+import com.demo.springframework.beans.factory.annotation.Value;
 import com.demo.springframework.stereotype.Component;
 import lombok.Data;
 
@@ -9,7 +11,11 @@ import java.util.Random;
 @Component("userService")
 public class UserService implements IUserService {
 
+    @Value("${token}")
     private String token;
+
+    @Autowired
+    private UserDao userDao;
 
     public UserService() {}
 
@@ -19,7 +25,7 @@ public class UserService implements IUserService {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return "小傅哥，100001，深圳";
+        return userDao.queryUserName("10001") + "，" + token;
     }
 
     public String register(String userName) {
