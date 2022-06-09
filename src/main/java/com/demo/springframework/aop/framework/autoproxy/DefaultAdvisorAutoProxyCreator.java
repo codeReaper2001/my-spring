@@ -13,12 +13,17 @@ import org.aopalliance.aop.Advice;
 import org.aopalliance.intercept.MethodInterceptor;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public class DefaultAdvisorAutoProxyCreator
         implements InstantiationAwareBeanPostProcessor,
         BeanFactoryAware {
 
     private DefaultListableBeanFactory beanFactory;
+
+    private final Set<Object> earlyProxyReferences = Collections.synchronizedSet(new HashSet<>());
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
@@ -28,6 +33,11 @@ public class DefaultAdvisorAutoProxyCreator
     @Override
     public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
         return null;
+    }
+
+    @Override
+    public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
+        return true;
     }
 
     private boolean isInfrastructureClass(Class<?> beanClass) {
@@ -44,6 +54,15 @@ public class DefaultAdvisorAutoProxyCreator
     // 在初始化后置处理中实现<<bean>>到<<bean的代理对象>>的转变
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        // 如果二级缓存中不存在该bean，则看情况返回代理对象
+        if (!earlyProxyReferences.contains(beanName)) {
+            return wrapIfNecessary(bean);
+        }
+        return bean;
+    }
+
+    // 如果bean需要包装成代理对象，则包装后返回，否则直接返回bean
+    protected Object wrapIfNecessary(Object bean) {
         // 获取class对象
         Class<?> beanClass = bean.getClass();
         if (isInfrastructureClass(beanClass)) return bean;
@@ -66,7 +85,7 @@ public class DefaultAdvisorAutoProxyCreator
             advisedSupport.setTargetSource(targetSource);
             advisedSupport.setMethodInterceptor((MethodInterceptor) advisor.getAdvice());
             advisedSupport.setMethodMatcher(advisor.getPointcut().getMethodMatcher());
-            advisedSupport.setProxyTargetClass(false);
+            advisedSupport.setProxyTargetClass(true);
 
             // 即使用当前bean封装为方法增强后的bean代理对象进行返回
             return new ProxyFactory(advisedSupport).getProxy();
@@ -74,6 +93,13 @@ public class DefaultAdvisorAutoProxyCreator
 
         // 没有符合的访问者，则直接返回原bean而不是bean代理对象
         return bean;
+    }
+
+    // 看情况返回代理对象
+    @Override
+    public Object getEarlyBeanReference(Object bean, String beanName) {
+        earlyProxyReferences.add(beanName);
+        return wrapIfNecessary(bean);
     }
 
     @Override
