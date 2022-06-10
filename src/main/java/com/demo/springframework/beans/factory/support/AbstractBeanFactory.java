@@ -5,6 +5,7 @@ import com.demo.springframework.beans.factory.FactoryBean;
 import com.demo.springframework.beans.factory.config.BeanDefinition;
 import com.demo.springframework.beans.factory.config.BeanPostProcessor;
 import com.demo.springframework.beans.factory.config.ConfigurableBeanFactory;
+import com.demo.springframework.core.convert.ConversionService;
 import com.demo.springframework.util.ClassUtils;
 import com.demo.springframework.util.StringValueResolver;
 
@@ -31,6 +32,9 @@ public abstract class AbstractBeanFactory
      * 要应用的字符串解析器，用于解析例如注解属性值
      */
     private final List<StringValueResolver> embeddedValueResolvers = new ArrayList<>();
+
+    // 要使用的ConversionService对象，用于属性类型转换
+    private ConversionService conversionService;
 
     @Override
     public Object getBean(String name) throws BeansException {
@@ -95,6 +99,16 @@ public abstract class AbstractBeanFactory
 
     protected abstract Object createBean(String beanName, BeanDefinition beanDefinition, Object[] args) throws BeansException;
 
+
+    @Override
+    public void setConversionService(ConversionService conversionService) {
+        this.conversionService = conversionService;
+    }
+
+    @Override
+    public ConversionService getConversionService() {
+        return this.conversionService;
+    }
     /**
      * Return the list of BeanPostProcessors that will get applied
      * to beans created with this factory.

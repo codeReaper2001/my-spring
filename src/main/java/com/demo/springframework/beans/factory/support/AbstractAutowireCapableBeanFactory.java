@@ -2,14 +2,17 @@ package com.demo.springframework.beans.factory.support;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.util.TypeUtil;
 import com.demo.springframework.beans.BeansException;
 import com.demo.springframework.beans.PropertyValue;
 import com.demo.springframework.beans.PropertyValues;
 import com.demo.springframework.beans.factory.*;
 import com.demo.springframework.beans.factory.config.*;
+import com.demo.springframework.core.convert.ConversionService;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory implements AutowireCapableBeanFactory {
 
@@ -178,6 +181,21 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                     // A 依赖 B，获取 B 的实例化
                     BeanReference beanReference = (BeanReference) value;
                     value = getBean(beanReference.getBeanName());
+                }
+                else { // 添加类型转换功能
+                    // 转换的源类型，一般为配置文件中的字符串
+                    Class<?> sourceType = value.getClass();
+                    // 目标类型，即对象的字段类型
+                    Class<?> targetType = (Class<?>) TypeUtil.getFieldType(bean.getClass(), name);
+                    ConversionService conversionService = getConversionService();
+                    // 判断ConversionService对象是否存在
+                    if (conversionService != null) {
+                        // 存在时进一步判断能否发生源类型到目标类型的转换
+                        if (conversionService.canConvert(sourceType, targetType)) {
+                            // 可以转换，转换后得到最终的值
+                            value = conversionService.convert(value, targetType);
+                        }
+                    }
                 }
                 // 属性填充
                 BeanUtil.setFieldValue(bean, name, value);
